@@ -12,8 +12,12 @@ public record EquipamentoDTO(
 
         String descricao,
 
-        @NotNull(message = "O id do tipo é obrigatório")
-        Integer tipoId,
+        @NotNull(message = "O id da categoria é obrigatório")
+        Integer categoriaId,
 
-        String patrimonio
+
+
+        String tombamento,
+
+        String url_imagem
 ) {}

@@ -3,9 +3,7 @@ package ufrn.deart.reservas.management.model;
 // Importe a anotação para lidar com tipos nativos do PostgreSQL
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
-import ufrn.deart.reservas.management.model.TipoEquipamento;
 
 import java.util.UUID;
 
@@ -19,11 +17,14 @@ public class Equipamento {
     @Column(nullable = false)
     private String nome;
     private String descricao;
-    private String patrimonio;
+    private String tombamento;
 
     @ManyToOne // Muitos equipamentos para UM tipo
-    @JoinColumn(name = "tipo_id", nullable = false)
-    private TipoEquipamento tipo;
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private CategoriaEquipamento categoria;
+
+    @JoinColumn(name = "img_url", nullable = false)
+    private String imgUrl;
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
@@ -54,20 +55,28 @@ public class Equipamento {
         this.descricao = descricao;
     }
 
-    public String getPatrimonio() {
-        return patrimonio;
+    public String getTombamento() {
+        return tombamento;
     }
 
-    public void setPatrimonio(String patrimonio) {
-        this.patrimonio = patrimonio;
+    public void setTombamento(String tombamento) {
+        this.tombamento = tombamento;
     }
 
-    public TipoEquipamento getTipo() {
-        return tipo;
+    public CategoriaEquipamento getCategoria() {
+        return categoria;
     }
 
-    public void setTipo(TipoEquipamento tipo) {
-        this.tipo = tipo;
+    public void setCategoria(CategoriaEquipamento categoria) {
+        this.categoria = categoria;
+    }
+
+    public String getUrlImagem() {
+        return imgUrl;
+    }
+
+    public void setUrlImagem(String urlImagem) {
+        this.imgUrl = urlImagem;
     }
 
     public StatusEquipamento getStatus() {

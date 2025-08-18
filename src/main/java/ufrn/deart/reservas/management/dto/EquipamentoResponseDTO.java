@@ -18,8 +18,8 @@ public class EquipamentoResponseDTO {
         this.id = equipamento.getId();
         this.nome = equipamento.getNome();
         this.descricao = equipamento.getDescricao();
-        this.patrimonio = equipamento.getPatrimonio();
-        this.tipo = equipamento.getTipo().getNome();
+        this.patrimonio = equipamento.getTombamento();
+        this.tipo = equipamento.getCategoria().getNome();
         this.status = equipamento.getStatus().name();
     }
 

@@ -3,10 +3,10 @@ package ufrn.deart.reservas.management.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tipos_equipamento")
-public class TipoEquipamento {
+@Table(name = "categoria_equipamento")
+public class CategoriaEquipamento {
 
-    public TipoEquipamento(Integer id) {
+    public CategoriaEquipamento(Integer id) {
         this.id = id;
     }
 
@@ -17,7 +17,7 @@ public class TipoEquipamento {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    public TipoEquipamento() {
+    public CategoriaEquipamento() {
 
     }
 
