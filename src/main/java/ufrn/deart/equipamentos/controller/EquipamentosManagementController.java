@@ -1,13 +1,17 @@
 package ufrn.deart.equipamentos.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ufrn.deart.equipamentos.dto.*;
 import ufrn.deart.equipamentos.model.CategoriaEquipamento;
 import ufrn.deart.equipamentos.model.Equipamento;
+import ufrn.deart.equipamentos.model.Usuario;
+import ufrn.deart.equipamentos.repository.UsuarioRepository;
 import ufrn.deart.equipamentos.service.CategoriaService;
 import ufrn.deart.equipamentos.service.EquipamentoService;
 
@@ -25,15 +29,30 @@ public class EquipamentosManagementController {
     @Autowired
     private final CategoriaService categoriaService;
 
+    @Autowired
+    private final UsuarioRepository usuarioRepository;
 
-    public EquipamentosManagementController(EquipamentoService equipamentoService, CategoriaService categoriaService) {
+
+    public EquipamentosManagementController(EquipamentoService equipamentoService, CategoriaService categoriaService, UsuarioRepository usuarioRepository) {
         this.equipamentoService = equipamentoService;
         this.categoriaService = categoriaService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
     public List<Equipamento> listarEquipamentos(){
         return equipamentoService.findAll();
+    }
+
+    @GetMapping("/ids")
+    public List<UUID> getEquipamentosIds() {
+        return equipamentoService.findAll().stream().map(Equipamento::getId).toList();
+    }
+
+    @GetMapping("/{id}")
+//    @RolesAllowed("ROLE_USER")
+    public ResponseEntity<EquipamentoResponseDTO> getById(@PathVariable UUID id){
+        return equipamentoService.getById(id);
     }
 
     // embeddings para ia service
@@ -94,6 +113,16 @@ public class EquipamentosManagementController {
     public ResponseEntity<CategoriaEquipamento> editTipo(
             @Valid @RequestBody CategoriaEquipamentoEditDTO tipoEquipamentoEditDTO) {
         return new ResponseEntity<>(categoriaService.edit(tipoEquipamentoEditDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<String>> getUsers() {
+
+        var users = usuarioRepository.findAll();
+
+        users.removeFirst();
+
+        return new ResponseEntity<>(users.stream().map(Usuario::getUsername).toList(), HttpStatus.OK);
     }
 
 

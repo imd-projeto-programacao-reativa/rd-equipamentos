@@ -25,8 +25,10 @@ public class Equipamento {
     @JoinColumn(name = "img_url", nullable = false)
     private String imgUrl;
 
-    @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+//    @Enumerated(EnumType.STRING)
+@Enumerated(EnumType.STRING)
+
+//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false, columnDefinition = "status_equipamento")
     private StatusEquipamento status;
 

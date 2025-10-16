@@ -34,6 +34,12 @@ public class EquipamentoService {
         return equipamentoRepository.findAll();
     }
 
+    public ResponseEntity<EquipamentoResponseDTO> getById(UUID id){
+        return equipamentoRepository.findById(id)
+                        .map(equipamento -> ResponseEntity.ok(new EquipamentoResponseDTO(equipamento)))
+                        .orElse(ResponseEntity.notFound().build());
+    }
+
     @Transactional
     public EquipamentoResponseDTO saveEquipamento(EquipamentoCreateDTO dto) {
         Equipamento novoEquipamento = new Equipamento();
@@ -45,7 +51,7 @@ public class EquipamentoService {
         novoEquipamento.setTombamento(dto.tombamento());
         novoEquipamento.setCategoria(categoria);
         novoEquipamento.setUrlImagem(dto.url_imagem());
-        novoEquipamento.setStatus(StatusEquipamento.disponivel);
+        novoEquipamento.setStatus(StatusEquipamento.DISPONIVEL);
 
         Equipamento equipamentoSalvo = equipamentoRepository.save(novoEquipamento);
 

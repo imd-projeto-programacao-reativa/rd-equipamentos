@@ -34,6 +34,11 @@ public class EquipamentosController {
         return equipamentoService.findAll();
     }
 
+    @GetMapping("/ids")
+    public List<UUID> getEquipamentosIds() {
+        return equipamentoService.findAll().stream().map(Equipamento::getId).toList();
+    }
+
 
     @GetMapping("/disponiveis")
     public ResponseEntity<Boolean> findByDisponiveis(
