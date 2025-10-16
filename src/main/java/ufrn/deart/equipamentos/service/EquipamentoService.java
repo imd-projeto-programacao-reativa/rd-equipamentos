@@ -49,9 +49,9 @@ public class EquipamentoService {
         novoEquipamento.setNome(dto.nome());
         novoEquipamento.setDescricao(dto.descricao());
         novoEquipamento.setTombamento(dto.tombamento());
-        novoEquipamento.setCategoriaId(categoria.getId());
+        novoEquipamento.setCategoriaId(dto.categoriaId());
+        novoEquipamento.setStatus(StatusEquipamento.DISPONIVEL);
         novoEquipamento.setImgUrl(dto.url_imagem());
-        novoEquipamento.setStatus(StatusEquipamento.disponivel);
 
         return equipamentoRepository.save(novoEquipamento)
                 .map(EquipamentoResponseDTO::new)

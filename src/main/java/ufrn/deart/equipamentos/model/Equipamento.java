@@ -25,7 +25,7 @@ public class Equipamento {
     @Column("img_url")
     private String imgUrl;
 
-    @Column("status_equipamento")
+    @Column("status")
     private StatusEquipamento status;
 
     // Getters e Setters
