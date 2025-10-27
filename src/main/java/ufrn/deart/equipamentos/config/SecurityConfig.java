@@ -33,8 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/front/**", "/actuator/**").permitAll()
-                        .requestMatchers("/management/").permitAll()
-                        .requestMatchers("/management/users").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/management/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(conf -> conf

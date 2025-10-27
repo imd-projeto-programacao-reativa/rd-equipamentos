@@ -4,6 +4,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import ufrn.deart.equipamentos.repository.UsuarioRepository;
 import ufrn.deart.equipamentos.service.CategoriaService;
 import ufrn.deart.equipamentos.service.EquipamentoService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -115,15 +117,16 @@ public class EquipamentosManagementController {
         return new ResponseEntity<>(categoriaService.edit(tipoEquipamentoEditDTO), HttpStatus.OK);
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<String>> getUsers() {
-
-        var users = usuarioRepository.findAll();
-
-        users.removeFirst();
-
-        return new ResponseEntity<>(users.stream().map(Usuario::getUsername).toList(), HttpStatus.OK);
+    @GetMapping("/disponiveis")
+    public ResponseEntity<Boolean> findByDisponiveis(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @RequestBody List<UUID> equipamentosIds
+    ){
+        Boolean listaEquipamentos = equipamentoService.equipamentosDisponiveis(equipamentosIds, dataInicio, dataFim);
+        return ResponseEntity.ok(listaEquipamentos);
     }
-
-
 }
+
+
+
