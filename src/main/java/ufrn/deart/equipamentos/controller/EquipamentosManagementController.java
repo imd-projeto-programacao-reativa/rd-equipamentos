@@ -1,129 +1,72 @@
 package ufrn.deart.equipamentos.controller;
 
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ufrn.deart.equipamentos.dto.*;
-import ufrn.deart.equipamentos.model.CategoriaEquipamento;
 import ufrn.deart.equipamentos.model.Equipamento;
-import ufrn.deart.equipamentos.model.Usuario;
-import ufrn.deart.equipamentos.repository.UsuarioRepository;
-import ufrn.deart.equipamentos.service.CategoriaService;
 import ufrn.deart.equipamentos.service.EquipamentoService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@Controller
 @RequestMapping("/management")
 public class EquipamentosManagementController {
 
     @Autowired
     private final EquipamentoService equipamentoService;
 
-    @Autowired
-    private final CategoriaService categoriaService;
 
-    @Autowired
-    private final UsuarioRepository usuarioRepository;
-
-
-    public EquipamentosManagementController(EquipamentoService equipamentoService, CategoriaService categoriaService, UsuarioRepository usuarioRepository) {
+    public EquipamentosManagementController(EquipamentoService equipamentoService) {
         this.equipamentoService = equipamentoService;
-        this.categoriaService = categoriaService;
-        this.usuarioRepository = usuarioRepository;
     }
 
-    @GetMapping
+    @QueryMapping(name = "getEquipamentos")
     public List<Equipamento> listarEquipamentos(){
         return equipamentoService.findAll();
     }
 
-    @GetMapping("/ids")
-    public List<UUID> getEquipamentosIds() {
-        return equipamentoService.findAll().stream().map(Equipamento::getId).toList();
+    @QueryMapping(name = "getEquipamentosIds")
+    public List<String> getEquipamentosIds() {
+        return equipamentoService.findAll().stream().map(
+                equipamento -> equipamento.getId().toString()
+        ).toList();
     }
 
-    @GetMapping("/{id}")
-//    @RolesAllowed("ROLE_USER")
-    public ResponseEntity<EquipamentoResponseDTO> getById(@PathVariable UUID id){
-        return equipamentoService.getById(id);
+    @QueryMapping(name = "getEquipamentosById")
+    public ResponseEntity<EquipamentoDTO> getById(@Argument String id){
+        return equipamentoService.getById(java.util.UUID.fromString(id));
     }
 
-    // embeddings para ia service
-    // endpoint para enviar os dados para embeddings no mcp
-    @PostMapping("/embeddings")
-    public List<EquipamentoForEmbeddingsDTO> getEquipamentos() {
-        List<Equipamento> equipamentos = this.equipamentoService.findAll();
-        List<EquipamentoForEmbeddingsDTO> equipamentosEmbeddings = new ArrayList<>();
-        equipamentos.forEach(equipamento -> {
-            equipamentosEmbeddings.add(new EquipamentoForEmbeddingsDTO(equipamento.getId(),
-                    equipamento.getNome(),
-                    equipamento.getDescricao(),
-                    equipamento.getStatus().name()));
-        });
-        equipamentosEmbeddings.forEach(eq -> {
-            System.out.println("fez o pedido" + eq.nome());
-        });
-
-        return equipamentosEmbeddings;
+    @QueryMapping(name = "getEquipamentosDisponiveis")
+    public ResponseEntity<Boolean> findByDisponiveis(@Argument FiltroByDisponibilidade filtro){
+        Boolean listaEquipamentos = equipamentoService.equipamentosDisponiveis(filtro);
+        return ResponseEntity.ok(listaEquipamentos);
     }
 
 
-    @PostMapping("/adicionar")
-    public ResponseEntity<EquipamentoResponseDTO> addEquipamentos(
-            @Valid @RequestBody EquipamentoCreateDTO equipamentoDTO ){
-        EquipamentoResponseDTO novoEquipamento = equipamentoService.saveEquipamento(equipamentoDTO);
+    @MutationMapping(name = "createEquipamento")
+    public ResponseEntity<EquipamentoDTO> addEquipamentos(@Argument @Valid EquipamentoDTO equipamentoDTO){
+        EquipamentoDTO novoEquipamento = equipamentoService.saveEquipamento(equipamentoDTO);
         return new ResponseEntity<>(novoEquipamento, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteEquipamentos(UUID equipamentoId){
-        return equipamentoService.deleteEquipamento(equipamentoId);
+    @MutationMapping(name = "deleteEquipamento")
+    public ResponseEntity<?> deleteEquipamentos(@Argument UUID idEquipamento){
+        return equipamentoService.deleteEquipamento(idEquipamento);
     }
 
-    @PutMapping("/editar")
-    public ResponseEntity<EquipamentoResponseDTO> editEquipamentos(
-            @Valid @RequestBody EquipamentoEditDTO equipamentoDTO) {
+
+    @MutationMapping(name = "editEquipamento")
+    public ResponseEntity<EquipamentoDTO> editEquipamentos(@Argument EquipamentoDTO equipamentoDTO) {
        return equipamentoService.editarEquipamento(equipamentoDTO);
     }
-
-
-    // categorias dos equipamentos
-
-    @PostMapping("/categorias/add")
-    public ResponseEntity<CategoriaEquipamento> addTipo(
-            @Valid @RequestBody CategoriaEquipamentoDTO CategoriaEquipamentoDTO) {
-        CategoriaEquipamento novaCategoriaEquipamento = categoriaService.save(CategoriaEquipamentoDTO);
-        return new ResponseEntity<>(novaCategoriaEquipamento, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/categorias")
-
-    public ResponseEntity<List<CategoriaEquipamento>> getTipos() {
-        return new ResponseEntity<>(categoriaService.findAll(), HttpStatus.OK);
-    }
-
-    @PutMapping("/categorias/edit")
-    public ResponseEntity<CategoriaEquipamento> editTipo(
-            @Valid @RequestBody CategoriaEquipamentoEditDTO tipoEquipamentoEditDTO) {
-        return new ResponseEntity<>(categoriaService.edit(tipoEquipamentoEditDTO), HttpStatus.OK);
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<List<String>> getUsers() {
-
-        var users = usuarioRepository.findAll();
-
-        users.removeFirst();
-
-        return new ResponseEntity<>(users.stream().map(Usuario::getUsername).toList(), HttpStatus.OK);
-    }
-
 
 }

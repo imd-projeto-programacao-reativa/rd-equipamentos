@@ -3,7 +3,7 @@ package ufrn.deart.equipamentos.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ufrn.deart.equipamentos.dto.EquipamentoDisponibilidadeDTO;
+import ufrn.deart.equipamentos.dto.EquipamentoDTO;
 import ufrn.deart.equipamentos.model.Equipamento;
 
 import java.time.LocalDate;
@@ -36,7 +36,7 @@ public interface EquipamentoRepository extends JpaRepository<Equipamento, UUID> 
         ORDER BY
             e.nome
     """, nativeQuery = true)
-    List<EquipamentoDisponibilidadeDTO> findEquipamentoStatusBetweenDates(
+    List<EquipamentoDTO> findEquipamentoStatusBetweenDates(
             @Param("dataInicio") LocalDate dataInicio,
             @Param("dataFim") LocalDate dataFim
     );

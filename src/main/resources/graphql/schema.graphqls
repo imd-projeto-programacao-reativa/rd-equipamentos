@@ -1,0 +1,66 @@
+type CategoriaEquipamento {
+    id: ID!
+    nome: String
+}
+
+enum StatusEquipamento {
+    DISPONIVEL
+    RESERVADO
+    EM_MANUTENCAO
+}
+
+type EquipamentoDTO {
+    id: ID!
+    nome: String
+    descricao: String
+    tombamento: String
+    categoria: CategoriaEquipamento
+    imgUrl: String
+    status: StatusEquipamento
+}
+
+type Usuario {
+    id: ID!
+    username: String
+    role: String
+    createdAt: String
+    updatedAt: String
+}
+
+type Query {
+    getEquipamentos: [EquipamentoDTO]
+    getEquipamentosIds: [ID]
+    getEquipamentosById(id: String): EquipamentoDTO
+    getEquipamentosDisponiveis(filtro: FiltroByDisponibilidade): Boolean
+}
+
+input FiltroByDisponibilidade {
+    dataInicio: String
+    dataFim: String
+    equipamentosIds: [ID]
+}
+
+type Mutation {
+    createEquipamento(equipamento: EquipamentoInput): EquipamentoDTO
+    deleteEquipamento(id: ID): Boolean
+    editEquipamento(equipamento: EquipamentoInput!): EquipamentoDTO
+
+}
+
+input CategoriaEquipamentoInput {
+    id: ID!
+    nome: String
+}
+
+input EquipamentoInput {
+    id: ID!
+    nome: String
+    descricao: String
+    tombamento: String
+    categoria: CategoriaEquipamentoInput
+    imgUrl: String
+    status: StatusEquipamento
+}
+
+
+

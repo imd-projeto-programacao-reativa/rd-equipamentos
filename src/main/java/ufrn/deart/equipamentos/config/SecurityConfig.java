@@ -32,9 +32,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers("/front/**", "/actuator/**").permitAll()
-                        .requestMatchers("/management/").permitAll()
-                        .requestMatchers("/management/users").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/graphiql/**", "/front/**", "/actuator/**").permitAll()
+                        .requestMatchers("/management/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(conf -> conf
