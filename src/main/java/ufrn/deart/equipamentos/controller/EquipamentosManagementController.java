@@ -2,6 +2,7 @@ package ufrn.deart.equipamentos.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import ufrn.deart.equipamentos.model.Equipamento;
 import ufrn.deart.equipamentos.service.CategoriaService;
 import ufrn.deart.equipamentos.service.EquipamentoService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,6 +86,20 @@ public class EquipamentosManagementController {
                 .map(cat -> ResponseEntity.status(HttpStatus.CREATED).body(cat));
     }
 
+    @GetMapping("/ids")
+    public Flux<UUID> getEquipamentosIds() {
+        return equipamentoService.findAll().map(Equipamento::getId);
+    }
+
+    @GetMapping("/disponiveis")
+    public Mono<ResponseEntity<Boolean>> findByDisponiveis(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @RequestBody List<UUID> equipamentosIds
+    ) {
+        return equipamentoService.equipamentosDisponiveis(equipamentosIds, dataInicio, dataFim)
+                .map(ResponseEntity::ok);
+    }
     @GetMapping("/categorias")
     public Flux<CategoriaEquipamento> getTipos() {
         return categoriaService.findAll();

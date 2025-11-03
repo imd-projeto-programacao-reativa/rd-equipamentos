@@ -114,6 +114,6 @@ public class EquipamentoService {
     public Mono<Boolean> equipamentosDisponiveis(List<UUID> ids, LocalDate dataInicio, LocalDate dataFim) {
         return equipamentoRepository
                 .countUnavailableEquipmentsByIdInAndDateRange(ids, dataInicio, dataFim)
-                .map(Objects::isNull);
+                .map(Objects::nonNull);
     }
 }

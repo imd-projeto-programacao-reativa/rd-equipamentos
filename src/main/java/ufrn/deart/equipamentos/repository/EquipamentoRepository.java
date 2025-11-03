@@ -17,6 +17,14 @@ public interface EquipamentoRepository extends ReactiveCrudRepository<Equipament
 
     Flux<Equipamento> findByCategoriaId(Integer categoriaId);
 
-    @Query("SELECT COUNT(*) FROM alguma_tabela_de_reservas r WHERE r.equipamento_id IN (:ids) AND r.data_reserva BETWEEN :startDate AND :endDate")
-    Mono<Equipamento> countUnavailableEquipmentsByIdInAndDateRange(@Param("ids") List<UUID> ids, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query("SELECT COUNT(*)\n" +
+            "FROM reservas r\n" +
+            "JOIN reserva_equipamentos re ON r.id = re.reserva_id\n" +
+            "WHERE re.equipamento_id IN (:ids)\n" +  // <-- Correção 1
+            "  AND (r.data_inicio, r.data_fim) OVERLAPS (:startDate, :endDate)\n")
+    Mono<Long> countUnavailableEquipmentsByIdInAndDateRange( // <-- Correção 3
+                                                             @Param("ids") List<UUID> ids,
+                                                             @Param("startDate") LocalDate startDate,
+                                                             @Param("endDate") LocalDate endDate
+    );
 }
