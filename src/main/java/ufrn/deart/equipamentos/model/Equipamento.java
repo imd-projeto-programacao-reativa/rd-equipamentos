@@ -29,7 +29,7 @@ public class Equipamento {
 @Enumerated(EnumType.STRING)
 
 //    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(nullable = false, columnDefinition = "status_equipamento")
+    @Column(nullable = false)
     private StatusEquipamento status;
 
     public UUID getId() {
